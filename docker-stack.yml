@@ -1,0 +1,93 @@
+version: '3'
+
+services: 
+  # db:
+  #   image: postgres:9.6.2
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - scDBData:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_USER=${DB_USER}
+  #     - POSTGRES_PASSWORD=${DB_PASS}
+  #     - POSTGRES_DB=${DB_NAME}
+  #   deploy:
+  #     placement:
+  #       constraints: [node.role == manager]
+  #   networks:
+  #     - swarm_middleware_net
+  primary:
+    hostname: 'primary'
+    image: crunchydata/crunchy-postgres:centos7-10.6-2.2.0
+    environment:
+    - PGHOST=/tmp
+    - MAX_CONNECTIONS=10
+    - MAX_WAL_SENDERS=5
+    - PG_MODE=primary
+    - PG_PRIMARY_USER=${DB_USER}
+    - PG_PRIMARY_PASSWORD=${DB_PASS}
+    - PG_DATABASE=${DB_NAME}
+    - PG_USER=${DB_USER}
+    - PG_PASSWORD=${DB_PASS}
+    - PG_ROOT_PASSWORD=${DB_PASS}
+    - PG_PRIMARY_PORT=5432
+    volumes:
+    - scDBDataPrimary:/pgdata
+    ports:
+    - "5432:5432"
+    networks:
+    - swarm_middleware_net
+    deploy:
+      placement:
+        constraints:
+        - node.role == manager
+  replica:
+    image: crunchydata/crunchy-postgres:centos7-10.6-2.2.0
+    environment:
+    - PGHOST=/tmp
+    - MAX_CONNECTIONS=10
+    - MAX_WAL_SENDERS=5
+    - PG_MODE=replica
+    - PG_PRIMARY_HOST=primary
+    - PG_PRIMARY_PORT=5432
+    - PG_PRIMARY_USER=${DB_USER}
+    - PG_PRIMARY_PASSWORD=${DB_PASS}
+    - PG_DATABASE=${DB_NAME}
+    - PG_USER=${DB_USER}
+    - PG_PASSWORD=${DB_PASS}
+    - PG_ROOT_PASSWORD=${DB_PASS}
+    volumes:
+    - scDBDataReplica:/pgdata
+    ports:
+    - "5432"
+    networks:
+    - swarm_middleware_net
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+        - node.role == worker
+  flyway:
+    image: boxfuse/flyway
+    command: -url=jdbc:postgresql://primary:5432/${DB_NAME} -schemas=public -user=${DB_USER} -password=${DB_PASS} migrate
+    volumes:
+      - scDBversion:/flyway/sql
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - swarm_middleware_net
+    depends_on:
+      - primary
+      - replica
+volumes:
+  scDBversion:
+  scDBDataPrimary:
+  scDBDataReplica:
+networks:
+  swarm_middleware_net:
+    external: true

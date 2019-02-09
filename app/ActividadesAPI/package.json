@@ -1,0 +1,32 @@
+{
+  "name": "actividadesdocker",
+  "version": "1.0.0",
+  "description": "Actividades Docker",
+  "main": "app.js",
+  "dependencies": {
+    "@koa/cors": "^2.2.1",
+    "chai": "^4.1.2",
+    "koa": "^2.5.0",
+    "koa-body": "^2.5.0",
+    "koa-logger": "^3.1.0",
+    "koa-router": "^7.3.0",
+    "koa-static": "^4.0.2",
+    "mocha": "^5.2.0",
+    "pg": "^6.4.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.28.0",
+    "sequelize-cli": "^3.2.0",
+    "supertest": "^3.1.0",
+    "yup": "^0.24.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha --exit '*.spec.js'"
+  },
+  "author": "Fredy Rodriguez",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}

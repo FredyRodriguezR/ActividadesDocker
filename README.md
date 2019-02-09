@@ -1,4 +1,4 @@
-# Second Circle Docker
+# Gestor de Actividades Dockerizado
 
 Este docker contiene back-end y versionado de Base de datos para Second Circle.  Uso:
 

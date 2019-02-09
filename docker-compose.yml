@@ -1,0 +1,60 @@
+version : "2"
+
+services:
+  api:
+    build:
+      context: ./node_build
+      args:
+        - USER_ID=$USER_ID
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_DIR=${APP_DIR}
+      - USER_DB_SECOND_CIRCLE=${DB_USER}
+      - PSS_DB_SECOND_CIRCLE=${DB_PASS}
+      - DB_SECOND_CIRCLE=${DB_NAME}
+      - DB_URL_SECOND_CIRCLE=${DB_URL}
+      - DB_PORT_SECOND_CIRCLE=${DB_PORT}
+    volumes:
+      - ./app:/app
+    command: sh -c 'cd /app/${APP_DIR}; npm install; nodemon app.js'
+    depends_on:
+      - postgresdb
+
+  client:
+    build:
+      context: ./react_build
+      args:
+        - USER_ID=$USER_ID
+    ports:
+      - "3000-3010:3000"
+    environment:
+      - APP_DIR=${FRONT_DIR}
+    volumes:
+      - ./client:/client
+    command: sh -c 'cd /client/${FRONT_DIR}; npm install; npm start'
+    depends_on:
+      - postgresdb
+
+  postgresdb:
+    image: postgres:9.6.2
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+  flyway:
+    image: boxfuse/flyway
+    command: -url=jdbc:postgresql://postgresdb:5432/${DB_NAME} -schemas=public -user=${DB_USER} -password=${DB_PASS} migrate
+    volumes:
+      - ./sql:/flyway/sql
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      - postgresdb
+    restart: on-failure

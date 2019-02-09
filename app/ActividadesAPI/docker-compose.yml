@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+
+  api:
+    image: asharastudios/$CI_PROJECT_NAME:$REPO_TAG
+    command: sh -c 'npm install; pm2-runtime start app.js --watch'
+    deploy:
+      replicas: 3
+    environment:
+      - USER_DB_SECOND_CIRCLE=${DB_USER}
+      - PSS_DB_SECOND_CIRCLE=${DB_PASS}
+      - DB_SECOND_CIRCLE=${DB_NAME}
+      - DB_URL_SECOND_CIRCLE=${DB_URL}
+      - DB_PORT_SECOND_CIRCLE=${DB_PORT}
+    networks:
+      - swarm_middleware_net
+
+networks:
+  swarm_middleware_net:
+    external: true
