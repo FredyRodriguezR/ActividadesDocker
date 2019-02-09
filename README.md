@@ -1,6 +1,6 @@
 # Gestor de Actividades Dockerizado
 
-Este docker contiene back-end y versionado de Base de datos para Second Circle.  Uso:
+Este docker contiene back-end, versionado de Base de datos para un Gestor de Actividades y front-end.  Uso:
 
 En su primera ejecución:
 ```sh
