@@ -14,7 +14,6 @@ ejecutar archivos (dependiendo de lo que se necesite):
 ./clean.sh #Limpia la base de datos y monta de nuevo la version actual.
 ./migrate.sh #Migra las versiones de la base de datos que se encuentran en la carpeta sql.
 ```
-* Debe crear la carpeta app en la raiz de este repo y dentro de ella clonar el api app/SecondCircle *
 
 Ver información del api (logs):
 
