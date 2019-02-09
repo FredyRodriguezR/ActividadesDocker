@@ -27,7 +27,7 @@ services:
       args:
         - USER_ID=$USER_ID
     ports:
-      - "3000-3010:3000"
+      - "3000-3010:3000-3010"
     environment:
       - APP_DIR=${FRONT_DIR}
     volumes:
